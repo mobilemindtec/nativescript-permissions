@@ -90,25 +90,38 @@ function request(perm, explanation) {
 
     return new Promise(function(granted, failed) {
 
-        // Check if we already have permissions, then we can grant automatically
-        if (hasPermission(perm)) {
-            granted();
-            return;
-        } else if (android.os.Build.VERSION.SDK_INT < 23) {
-            // If we are on API < 23 and we get a false back, then this means they forgot to put a manifest permission in...
-            failed();
-            return;
+        var needs = []
+        var permissions = Object.prototype.toString.call( perm ) === '[object Array]' ? perm : [perm]
+
+        for(var i in permissions){            
+            // Check if we already have permissions, then we can grant automatically
+            if (hasPermission(permissions[i])) {                
+                needs.push(permissions[i])
+            } else if (android.os.Build.VERSION.SDK_INT < 23) {
+                // If we are on API < 23 and we get a false back, then this means they forgot to put a manifest permission in...
+                failed();
+                return;
+            }
+        }
+
+        if(needs.length == 0){
+            granted()
+            return
         }
 
 
         // Check if we need to show a explanation , if so show it.
-        if (android.support.v4.app.ActivityCompat.shouldShowRequestPermissionRationale(application.android.foregroundActivity, perm)) {
-            if (typeof explanation === "function") {
-                explanation();
-            } else if (explanation && explanation.length) {
-                var toast = android.widget.Toast.makeText(application.android.context, explanation, android.widget.Toast.LENGTH_LONG);
-                toast.setGravity((48 | 1), 0, 0);
-                toast.show();
+        for(var i in permissions){     
+            if (android.support.v4.app.ActivityCompat.shouldShowRequestPermissionRationale(application.android.foregroundActivity, permissions[i])) {
+                if (typeof explanation === "function") {
+                    explanation();
+                    break
+                } else if (explanation && explanation.length) {
+                    var toast = android.widget.Toast.makeText(application.android.context, explanation, android.widget.Toast.LENGTH_LONG);
+                    toast.setGravity((48 | 1), 0, 0);
+                    toast.show();
+                    break
+                }
             }
         }
 
@@ -116,7 +129,7 @@ function request(perm, explanation) {
         promiseId++;
         pendingPromises[promiseId] = {granted: granted, failed: failed};
 
-        android.support.v4.app.ActivityCompat.requestPermissions(application.android.foregroundActivity, [perm], promiseId);
+        android.support.v4.app.ActivityCompat.requestPermissions(application.android.foregroundActivity, needs, promiseId);
     });
 }
 
