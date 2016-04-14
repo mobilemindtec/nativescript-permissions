@@ -14,11 +14,12 @@
 
 
 // If this isn't a Android platform we will exit and do nothing.
-if (!android) {
-    return;
-}
 
 var application = require('application');
+
+if (!application.android) {
+    return;
+}
 
 if (typeof application.AndroidApplication.activityRequestPermissionsEvent === 'undefined') {
     throw new Error("You must be using at least version 2.0 of the TNS runtime and core-modules!");
@@ -95,7 +96,7 @@ function request(perm, explanation) {
 
         for(var i in permissions){            
             // Check if we already have permissions, then we can grant automatically
-            if (hasPermission(permissions[i])) {                
+            if (!hasPermission(permissions[i])) {                
                 needs.push(permissions[i])
             } else if (android.os.Build.VERSION.SDK_INT < 23) {
                 // If we are on API < 23 and we get a false back, then this means they forgot to put a manifest permission in...
