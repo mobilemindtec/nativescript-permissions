@@ -100,7 +100,7 @@ function request(perm, explanation) {
                 needs.push(permissions[i])
             } else if (android.os.Build.VERSION.SDK_INT < 23) {
                 // If we are on API < 23 and we get a false back, then this means they forgot to put a manifest permission in...
-                failed();
+                failed("not required");
                 return;
             }
         }
