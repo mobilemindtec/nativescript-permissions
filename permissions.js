@@ -42,13 +42,18 @@ application.android.on(application.AndroidApplication.activityRequestPermissions
 
     // Check the status of the permission
     if (args.grantResults.length > 0) {
-        if (args.grantResults[0] === android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            promises.granted();
-            return;
-        }
+        for(var i = 0; i < args.grantResults.length; i++){
+            if (args.grantResults[i] != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                promises.failed();     
+                return;
+            }
+        }        
+    }else{
+        promises.failed();
+        return
     }
-    promises.failed();
-
+    
+    promises.granted();
 });
 
 
