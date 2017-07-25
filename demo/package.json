@@ -1,12 +1,17 @@
 {
+  "description": "NativeScript Application",
+  "license": "SEE LICENSE IN <your-license-filename>",
+  "readme": "NativeScript Application",
+  "repository": "<fill-your-repository-here>",
   "nativescript": {
-    "id": "org.nativescript.demo",
-    "tns-android": {
-      "version": "next"
-    }
+    "id": "org.nativescript.demo"
   },
   "dependencies": {
-    "nativescript-permissions": "file:..",
-    "tns-core-modules": "http://nativescript.rocks/master/tns-core-modules-master.tgz",
+    "nativescript-permissions": "file:../",
+    "nativescript-theme-core": "~1.0.2",
+    "tns-core-modules": "3.1.0"
+  },
+  "devDependencies": {
+    "nativescript-dev-android-snapshot": "^0.*.*"
   }
 }
