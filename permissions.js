@@ -16,46 +16,47 @@
 // If this isn't a Android platform we will exit and do nothing.
 
 var application = require('application');
-
-if (!application.android) {
-    return;
-}
-
-if (typeof application.AndroidApplication.activityRequestPermissionsEvent === 'undefined') {
-    throw new Error("You must be using at least version 2.0 of the TNS runtime and core-modules!");
-}
-
 // Variables to track any pending promises
 var pendingPromises = {}, promiseId = 3000;
 
 
-/**
- * This handles the results of getting the permissions!
- */
-application.android.on(application.AndroidApplication.activityRequestPermissionsEvent, function(args) {
-
-    // get current promise set
-    var promises = pendingPromises[args.requestCode];
-
-    // Delete it
-    delete pendingPromises[args.requestCode];
-
-    // Check the status of the permission
-    if (args.grantResults.length > 0) {
-        for(var i = 0; i < args.grantResults.length; i++){
-            if (args.grantResults[i] != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                promises.failed();     
-                return;
-            }
-        }        
-    }else{
-        promises.failed();
-        return
+(function(){
+    if (!application.android) {
+        return;
     }
-    
-    promises.granted();
-});
 
+    if (typeof application.AndroidApplication.activityRequestPermissionsEvent === 'undefined') {
+        throw new Error("You must be using at least version 2.0 of the TNS runtime and core-modules!");
+    }
+
+    /**
+     * This handles the results of getting the permissions!
+     */
+    application.android.on(application.AndroidApplication.activityRequestPermissionsEvent, function(args) {
+
+        // get current promise set
+        var promises = pendingPromises[args.requestCode];
+
+        // Delete it
+        delete pendingPromises[args.requestCode];
+
+        // Check the status of the permission
+        if (args.grantResults.length > 0) {
+            for(var i = 0; i < args.grantResults.length; i++){
+                if (args.grantResults[i] != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    promises.failed();     
+                    return;
+                }
+            }        
+        }else{
+            promises.failed();
+            return
+        }
+        
+        promises.granted();
+    });
+
+})()
 
 
 /**
@@ -63,6 +64,10 @@ application.android.on(application.AndroidApplication.activityRequestPermissions
  * @returns {boolean}
  */
 function hasSupportVersion4() {
+
+    if(!application.android)
+        return
+    
     if (!android.support || !android.support.v4 || !android.support.v4.content
         || !android.support.v4.content.ContextCompat
         || !android.support.v4.content.ContextCompat.checkSelfPermission) {
@@ -79,6 +84,10 @@ function hasSupportVersion4() {
  * @returns {boolean}
  */
 function hasPermission(perm) {
+
+    if(!application.android)
+        return
+
     // If we don't have support v4 loaded; then we can't run any checks and have to assume
     // that they have put the permission in the manifest and everything is good to go
     if (!hasSupportVersion4()) return true;
@@ -93,6 +102,9 @@ function hasPermission(perm) {
 
 
 function request(perm, explanation) {
+
+    if(!application.android)
+        return
 
     return new Promise(function(granted, failed) {
 
