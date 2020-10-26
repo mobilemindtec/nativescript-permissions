@@ -2,7 +2,7 @@
   "name": "nativescript-permissions",
   "version": "1.0.0",
   "description": "A NativeScript plugin to deal with Android permissions",
-  "main": "index.d.ts",
+  "main": "index.js",
   "nativescript": {
     "platforms": {
       "ios": "3.0.0",
