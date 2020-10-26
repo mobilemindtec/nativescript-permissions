@@ -14,9 +14,11 @@
 
 const application = require('@nativescript/core/application');
 
-//noinspection JSUnresolvedVariable,JSUnresolvedFunction
-if (typeof application.AndroidApplication.activityRequestPermissionsEvent === 'undefined') {
-    throw new Error("You must be using at least version 2.0 of the TNS runtime and core-modules!");
+if(application.android){
+    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+    if (typeof application.AndroidApplication.activityRequestPermissionsEvent === 'undefined') {
+        throw new Error("You must be using at least version 2.0 of the TNS runtime and core-modules!");
+    }
 }
 
 // Variables to track any pending promises
